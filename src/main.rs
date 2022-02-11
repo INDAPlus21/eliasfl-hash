@@ -4,24 +4,27 @@ use clap::Parser;
 
 use eliasfl_hash::db::Database;
 
+type Key = u64;
+type Value = String;
+
 #[derive(Debug, Clone, Parser)]
 enum Subcommand {
     /// Get value by key
     Get {
         /// The key to get
-        key: u64,
+        key: Key,
     },
     /// Insert value with key
     Insert {
         /// The key to insert at
-        key: u64,
+        key: Key,
         /// The value to insert
-        value: String,
+        value: Value,
     },
     /// Remove value with key
     Remove {
         /// The key to remove
-        key: u64,
+        key: Key,
     },
 }
 
