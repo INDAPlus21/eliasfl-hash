@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, RwLock};
 
 use crate::hash::HashMap;
@@ -17,7 +17,7 @@ pub struct Database<K, V> {
 }
 
 impl Database<u64, String> {
-    pub fn new<S: AsRef<str>>(filename: S) -> Self {
+    pub fn new<S: AsRef<Path>>(filename: S) -> Self {
         let path = PathBuf::from(filename.as_ref());
         let map = if path.exists() {
             let json = fs::read_to_string(&path).unwrap();
