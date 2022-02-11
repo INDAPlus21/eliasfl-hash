@@ -20,7 +20,8 @@ impl Database<u64, String> {
     pub fn new<S: AsRef<str>>(filename: S) -> Self {
         let path = PathBuf::from(filename.as_ref());
         let map = if path.exists() {
-            HashMap::new()
+            let json = fs::read_to_string(&path).unwrap();
+            serde_json::from_str(&json).unwrap()
         } else {
             HashMap::new()
         };
@@ -41,17 +42,16 @@ impl Database<u64, String> {
         let records = self.records.write();
         let mut guard = records.unwrap();
         let result = guard.insert(key, val).map(|val| val.clone());
-        serde_json::to_writer(
-            fs::File::create(&self.file).unwrap(),
-            &self.records.read().unwrap().clone(),
-        )
-        .unwrap();
+        let json = serde_json::to_string(&guard.clone()).unwrap();
+        fs::write(&self.file, json).unwrap();
         result
     }
     pub fn remove(&self, key: u64) -> Option<String> {
         let records = self.records.write();
-        records
-            .ok()
-            .and_then(|mut guard| guard.remove(&key.into()).map(|val| val.clone()))
+        let mut guard = records.unwrap();
+        let result = guard.remove(&key).map(|val| val.clone());
+        let json = serde_json::to_string(&guard.clone()).unwrap();
+        fs::write(&self.file, json).unwrap();
+        result
     }
 }
