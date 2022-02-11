@@ -1,11 +1,11 @@
-use std::{
-    borrow::Borrow,
-    hash::{Hash, Hasher},
-    mem,
-};
+use serde::{Deserialize, Serialize};
+use std::borrow::Borrow;
+use std::hash::{Hash, Hasher};
+use std::mem;
 
 const INITIAL_BUCKETS: usize = 1;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HashMap<K, V> {
     buckets: Vec<Vec<(K, V)>>,
     count: usize,

@@ -27,7 +27,7 @@ enum Cli {
 fn main() {
     let args = Cli::parse();
 
-    let db = Database::new();
+    let db = Database::new("./database.json");
 
     let result = match args {
         Cli::Get { key } => db.get(key),
