@@ -1,6 +1,9 @@
 use std::error::Error;
 use std::fmt;
 use std::str::FromStr;
+use std::sync::{Arc, RwLock};
+
+use crate::hash::HashMap;
 
 #[derive(Debug, Clone)]
 pub struct ArgParseError(String);
@@ -33,10 +36,21 @@ impl FromStr for Action {
     }
 }
 
-pub struct Database {}
+pub struct Database<K, V> {
+    records: Arc<RwLock<HashMap<K, V>>>,
+}
 
-impl Database {
+impl Database<u64, String> {
     pub fn new() -> Self {
-        Self {}
+        let map = HashMap::new();
+        let records = Arc::new(RwLock::new(map));
+        Self { records }
+    }
+
+    pub fn get(&self, key: u64) -> Option<String> {
+        self.records
+            .read()
+            .ok()
+            .and_then(|guard| guard.get(&key.into()).map(|val| val.clone()))
     }
 }
